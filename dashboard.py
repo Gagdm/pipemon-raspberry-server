@@ -1,5 +1,6 @@
 from nicegui import ui, app
 from pathlib import Path
+import asyncio
 import random
 
 #-----------------------------------------------------------------------------------------------------------------
@@ -45,6 +46,17 @@ def change_image(image):
     new_image = select_image_randomly()
     image.set_source(new_image)
 #-----------------------------------------------------------------------------------------------------------------
+# coloca um delay para simular um carregamento e direciona para a próxima aba
+async def sequence_start():
+        
+    # gera uma notificação
+    ui.notify('Iniciando sistema...', type='ongoing')
+    # simula tempo de boot
+    await asyncio.sleep(2.0) 
+    # direciona para a página dashboard
+    ui.navigate.to('/dashboard')
+#-----------------------------------------------------------------------------------------------------------------
+
 
 #==================================================================================================================
 # ------------------------------------------------- DASHBOARD --------------------------------------------------
@@ -103,7 +115,7 @@ def initial_page():
         ui.label('IF474 - Tópicos Avançados em Redes de Computadores - Gabriel Alves <gagm> e Lucas Emanuel <lessl>').classes('text-1xl font-mono mb-8')
 
         # botão que encaminha para a página de tabelas
-        ui.button('VISUALIZAR DADOS', icon='power_settings_new') \
+        ui.button('VISUALIZAR DADOS', icon='power_settings_new', on_click=sequence_start) \
             .classes('px-8 py-4 text-xl bg-green-600 hover:bg-green-500 rounded-full shadow-lg font-bold')
 #----------------------------------------------------------------------------------------------------------------- 
 
