@@ -64,7 +64,11 @@ def initial_page():
         # título, subtítulo e legendas
         ui.label('PipeMon').classes('text-5xl font-bold mb-1')
         ui.label('Sistema de Monitoramento de Tubulações Subterrâneas e comunicação via LoRa').classes('text-2xl font-mono')
-        ui.label('IF474 - Tópicos Avançados em Redes de Computadores - Gabriel Alves <gagm> e Lucas Emanuel <lessl>').classes('text-1xl font-mono')
+        ui.label('IF474 - Tópicos Avançados em Redes de Computadores - Gabriel Alves <gagm> e Lucas Emanuel <lessl>').classes('text-1xl font-mono mb-8')
+
+        # botão que encaminha para a página de tabelas
+        ui.button('VISUALIZAR DADOS', icon='power_settings_new') \
+            .classes('px-8 py-4 text-xl bg-green-600 hover:bg-green-500 rounded-full shadow-lg font-bold')
 #----------------------------------------------------------------------------------------------------------------- 
 
 #==================================================================================================================
