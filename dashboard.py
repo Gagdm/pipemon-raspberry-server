@@ -47,6 +47,42 @@ def change_image(image):
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
+# ------------------------------------------------- DASHBOARD --------------------------------------------------
+#==================================================================================================================
+
+#----------------------------------------------------------------------------------------------------------------- 
+# definição da tela dashboard
+@ui.page('/dashboard')
+def dashboard_page():
+    with ui.row().classes('w-full h-screen gap-0 no-wrap'):
+        
+        # definição da coluna que fica do lado esquerdo da tela e ocupa 1/5 da sua largura
+        with ui.column().classes('w-1/5 bg-slate-100 p-4 border-r border-slate-300'):
+            ui.label('Histórico')
+
+        # definição da coluna que fica do lado direito da tela e ocupa 4/5 de sua largura
+        with ui.column().classes('w-4/5 bg-white p-6'):
+
+            # ajustes visuais nas abas de seleção interativa
+            with ui.tabs().classes('w-full').props('align="justify"') as tabs:
+                temp = ui.tab('Temperature')
+                flow = ui.tab('Flow')
+
+            # cria as abas de seleção interativa e através de uma ação faz o chaveamento de qual aba mostrar
+            with ui.tab_panels(tabs, value=flow).classes('w-full p-4'):
+
+                # aba "TEMPERATURE" mostrará o gráfico das temperaturas recebidas ao longo do tempo
+                with ui.tab_panel(temp):
+                    ui.label('Conteúdo da primeira aba - gráfico da temperatura')
+
+                # aba "FLOW" mostrará o gráfico das vazões recebidas ao longo do tempo
+                with ui.tab_panel(flow):
+                    ui.label('Conteúdo da segunda aba - gráfico da vazão')
+
+ui.run()
+#----------------------------------------------------------------------------------------------------------------- 
+
+#==================================================================================================================
 # ----------------------------------------------- PÁGINA INICIAL ------------------------------------------------
 #==================================================================================================================
 
