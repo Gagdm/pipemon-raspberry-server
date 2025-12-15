@@ -47,16 +47,27 @@ def change_image(image):
     image.set_source(new_image)
 #-----------------------------------------------------------------------------------------------------------------
 # coloca um delay para simular um carregamento e direciona para a próxima aba
-async def sequence_start():
-        
-    # gera uma notificação
-    ui.notify('Iniciando sistema...', type='ongoing')
-    # simula tempo de boot
-    await asyncio.sleep(2.0) 
-    # direciona para a página dashboard
-    ui.navigate.to('/dashboard')
-#-----------------------------------------------------------------------------------------------------------------
+async def go_to_page(new_page, current_page):
 
+    if new_page == 'home' and current_page == 'dashboard':
+
+        # gera notificações e simula o tempo de boot
+        ui.notify('Fechando arquivos...', type='ongoing')
+        await asyncio.sleep(1.2) 
+        ui.notify('Redirecionando para Home...', type='ongoing')
+        await asyncio.sleep(1.5) 
+        # direciona para a Home
+        ui.navigate.to('/')
+
+    elif new_page == 'dashboard' and current_page == 'home':
+
+        # gera uma notificação
+        ui.notify('Iniciando sistema...', type='ongoing')
+        # simula tempo de boot
+        await asyncio.sleep(2.0) 
+        # direciona para a página dashboard
+        ui.navigate.to('/dashboard')
+#-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
 # ------------------------------------------------- DASHBOARD --------------------------------------------------
@@ -67,6 +78,10 @@ async def sequence_start():
 @ui.page('/dashboard')
 def dashboard_page():
     with ui.row().classes('w-full h-screen gap-0 no-wrap'):
+
+        # botão Home no canto inferior direito
+        ui.button(icon='home', on_click=lambda: go_to_page('home','dashboard')) \
+            .classes('fixed bottom-5 right-5 z-50 rounded-full shadow-2xl w-14 h-14 bg-blue-600 hover:bg-blue-500 text-white')
         
         # definição da coluna que fica do lado esquerdo da tela e ocupa 1/5 da sua largura
         with ui.column().classes('w-1/5 bg-slate-100 p-4 border-r border-slate-300'):
@@ -115,7 +130,7 @@ def initial_page():
         ui.label('IF474 - Tópicos Avançados em Redes de Computadores - Gabriel Alves <gagm> e Lucas Emanuel <lessl>').classes('text-1xl font-mono mb-8')
 
         # botão que encaminha para a página de tabelas
-        ui.button('VISUALIZAR DADOS', icon='power_settings_new', on_click=sequence_start) \
+        ui.button('VISUALIZAR DADOS', icon='power_settings_new', on_click=lambda: go_to_page('dashboard','home')) \
             .classes('px-8 py-4 text-xl bg-green-600 hover:bg-green-500 rounded-full shadow-lg font-bold')
 #----------------------------------------------------------------------------------------------------------------- 
 
