@@ -9,6 +9,9 @@ MQTT_PORT = 1883
 # Tópico que o script irá ESCUTAR (assinante)
 MQTT_TOPIC = "gateway/data" 
 
+TEMP_FILEPATH = "sensors_data/temp_sensors_data.txt"
+FLOW_FILEPATH = "sensors_data/flow_sensors_data.txt"
+
 # --- CALLBACKS MQTT ---
 
 def on_connect(client, userdata, flags, rc):
@@ -41,6 +44,13 @@ def on_message(client, userdata, msg):
         print(f"Temperatura de entrada: {temp_in:.2f}°C | Vazão de entrada: {flow_in:.2f}L/s")
         print(f"Temperatura de saída: {temp_out:.2f}°C | Vazão de saída: {flow_out:.2f}L/s")
         
+        with open(TEMP_FILEPATH, "w") as file:
+            file.write(f"{timestamp},{temp_in},{temp_out}\n")
+
+        
+        with open(FLOW_FILEPATH, "w") as file:
+            file.write(f"{timestamp},{flow_in},{flow_out}\n")
+
         # --- AQUI VOCÊ ADICIONA A LÓGICA DE SALVAR NO BANCO DE DADOS ---
         # Exemplo:
         # save_to_database(device_id, temp_c, umidade_pct, timestamp)
