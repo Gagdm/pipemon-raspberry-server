@@ -84,6 +84,35 @@ async def go_to_page(new_page, current_page):
         await asyncio.sleep(2.0) 
         # direciona para a página dashboard
         ui.navigate.to('/dashboard')
+
+    elif new_page == 'history' and current_page == 'dashboard':
+
+        # gera uma notificação
+        ui.notify('Abrindo o histórico...', type='ongoing')
+        # simula tempo de boot
+        await asyncio.sleep(2.0) 
+        # direciona para a página history
+        ui.navigate.to('/history')
+
+    elif new_page == 'dashboard' and current_page == 'history':
+
+        # gera uma notificação
+        ui.notify('Atualizando sistema', type='ongoing')
+        # simula tempo de boot
+        await asyncio.sleep(2.0) 
+        # direciona para a página history
+        ui.navigate.to('/history')
+
+    elif new_page == 'home' and current_page == 'history':
+
+        # gera notificações e simula o tempo de boot
+        ui.notify('Fechando histórico...', type='ongoing')
+        await asyncio.sleep(1.2) 
+        ui.notify('Redirecionando para página inicial...', type='ongoing')
+        await asyncio.sleep(1.5) 
+        # direciona para a Home
+        ui.navigate.to('/')
+
 #-----------------------------------------------------------------------------------------------------------------
 # pega a última linha do arquivo escolhido
 def get_current_data(arc):
@@ -229,6 +258,7 @@ def temp_expansions():
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
 #-----------------------------------------------------------------------------------------------------------------
 # função para utilizar no timer e recarregar a página das vazões
+@ui.refreshable
 def flow_expansions():
     # pega as últimas vazões 
     CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
@@ -272,6 +302,7 @@ def flow_expansions():
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-xs text-gray-500')
 #-----------------------------------------------------------------------------------------------------------------
 # função para utilizar no timer e recarregar a página das vazões
+@ui.refreshable
 def stretch_expansions():
     
     CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
@@ -334,14 +365,25 @@ def stretch_expansions():
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-sm text-white')
                         ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-300')
 #-----------------------------------------------------------------------------------------------------------------
-@ui.refreshable
-def refresh_expansions():  
-    flow_expansions()
-    stretch_expansions()
-#-----------------------------------------------------------------------------------------------------------------
 def toggle_menu():
     # inverte o estado do menu
     MENU_STATE['aberto'] = not MENU_STATE['aberto']
+
+#-----------------------------------------------------------------------------------------------------------------
+
+#==================================================================================================================
+# -------------------------------------------------- HISTORY ---------------------------------------------------
+#==================================================================================================================
+
+#----------------------------------------------------------------------------------------------------------------- 
+@ui.page('/history')
+def history_page():
+    
+    p = ui.pagination(1, 5, direction_links=True)
+    ui.label().bind_text_from(p, 'value', lambda v: f'Page {v}')
+
+ui.run()
+
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
@@ -353,10 +395,6 @@ def toggle_menu():
 @ui.page('/dashboard')
 def dashboard_page():
     with ui.row().classes('w-full h-screen gap-0 no-wrap'):
-
-        # botão Home no canto inferior direito
-        ui.button(icon='home', on_click=lambda: go_to_page('home','dashboard')) \
-            .classes('fixed bottom-5 right-5 z-50 rounded-full shadow-2xl w-14 h-14 bg-blue-600 hover:bg-blue-500 text-white')
         
         # definição da coluna que fica do lado esquerdo da tela e ocupa 1/5 da sua largura
         with ui.column().classes('w-1/5 bg-slate-100 p-4 border-r border-slate-300'):
@@ -385,7 +423,9 @@ def dashboard_page():
                     flow_expansions()
                     ui.separator()
                     stretch_expansions()
-                    ui.timer(60, refresh_expansions.refresh)
+                    ui.timer(60, flow_expansions.refresh)
+                    ui.timer(60, stretch_expansions.refresh)
+
         
         with ui.column().classes('fixed bottom-5 right-5 z-100 gap-3 items-center'):
 
@@ -395,7 +435,7 @@ def dashboard_page():
                 .bind_visibility_from(MENU_STATE, 'aberto') # só aparece se 'aberto' for True
 
             # declaração do botão da página inicial
-            ui.button(icon='home', on_click=lambda: go_to_page()) \
+            ui.button(icon='home', on_click=lambda: go_to_page('home', 'dashboard')) \
                 .classes('rounded-full w-12 h-12 !bg-blue-900 !hover:bg-blue-600 shadow-xl text-white') \
                 .bind_visibility_from(MENU_STATE, 'aberto') # só aparece se 'aberto' for True
 
