@@ -3,6 +3,7 @@ from pathlib import Path
 import asyncio
 import random
 import os
+import 
 
 #-----------------------------------------------------------------------------------------------------------------
 
@@ -14,19 +15,21 @@ import os
 # variáveis para auxiliar ajustes, caso necessário
 NUM_SENSORS = 2
 MAX_TEMP = 27
-MIM_TEMP = 20
+MIN_TEMP = 20
 DISC_TEMP = -127
 CURRENT_TEMPERATURE = [0.0] * NUM_SENSORS
 CURRENT_TEMP_TIME = ''
 CURRENT_FLOW_TIME = ''
 CURRENT_FLOW = [0.0] * NUM_SENSORS
 DIF_ACCEPT_FLOW = 1
+DISC_FLOW = -127
 MENU_STATE = {'aberto': False}
 MENU_ICON = ''
 #-----------------------------------------------------------------------------------------------------------------
 # Caminho de arquivos e diretórios
 BASE_DIR = Path(__file__).parent
 DEBUG_FILE = BASE_DIR / 'logs' / 'debug_sensors.txt'
+FLOW_DIFFERENCE_FILE = BASE_DIR / 'logs' / 'flow_difference.txt'
 TEMP_SENSORS_DATA_FILE = BASE_DIR / 'sensors_data' / 'temp_sensors_data.txt'
 FLOW_SENSORS_DATA_FILE = BASE_DIR / 'sensors_data' / 'flow_sensors_data.txt'
 ASSETS_FOLDER = BASE_DIR / 'assets'
@@ -97,11 +100,12 @@ async def go_to_page(new_page, current_page):
     elif new_page == 'dashboard' and current_page == 'history':
 
         # gera uma notificação
-        ui.notify('Atualizando sistema', type='ongoing')
-        # simula tempo de boot
+        ui.notify('Fechando histórico...', type='ongoing')
+        await asyncio.sleep(1.2) 
+        ui.notify('Atualizando sistema...', type='ongoing')
         await asyncio.sleep(2.0) 
         # direciona para a página history
-        ui.navigate.to('/history')
+        ui.navigate.to('/dashboard')
 
     elif new_page == 'home' and current_page == 'history':
 
@@ -112,7 +116,6 @@ async def go_to_page(new_page, current_page):
         await asyncio.sleep(1.5) 
         # direciona para a Home
         ui.navigate.to('/')
-
 #-----------------------------------------------------------------------------------------------------------------
 # pega a última linha do arquivo escolhido
 def get_current_data(arc):
@@ -186,7 +189,7 @@ def temp_expansions():
     for i in range(NUM_SENSORS):
 
         # verifica se a temperatura está dentro do esperado, caso contrário, haverá avisos!
-        if CURRENT_TEMPERATURE[i] > MIM_TEMP and CURRENT_TEMPERATURE[i] < MAX_TEMP:
+        if CURRENT_TEMPERATURE[i] >= MIN_TEMP and CURRENT_TEMPERATURE[i] <= MAX_TEMP:
             with ui.expansion(f'Sensor de Temperatura {i+1}', icon='device_thermostat') \
                 .classes('w-full bg-slate-800 text-white rounded-xl mb-2 border border-slate-700 shadow-lg'):
         
@@ -267,7 +270,7 @@ def flow_expansions():
     for i in range(NUM_SENSORS):
 
         # caso em que o sensor está disconectado
-        if CURRENT_FLOW[i] == 0.00:
+        if CURRENT_FLOW[i] == DISC_FLOW:
             with ui.expansion(f'Sensor de Vazão {i+1}', icon='sensors_off') \
                 .classes('w-full bg-slate-800 text-gray-500 rounded-xl mb-2 border-2 border-red-700 shadow-lg'):
         
@@ -313,7 +316,7 @@ def stretch_expansions():
         dif_current_flow = CURRENT_FLOW[i] - CURRENT_FLOW[i+1]
 
         # caso em que algum sensor está disconetado
-        if CURRENT_FLOW[i] == 0 or CURRENT_FLOW[i+1] == 0:
+        if CURRENT_FLOW[i] == DISC_FLOW or CURRENT_FLOW[i+1] == DISC_FLOW:
             with ui.expansion(f'Trecho {i+1}', icon='sensors_off') \
                 .classes('w-full bg-slate-800 text-gray-500 rounded-xl mb-2 border-2 border-red-700 shadow-lg'):
         
@@ -368,7 +371,6 @@ def stretch_expansions():
 def toggle_menu():
     # inverte o estado do menu
     MENU_STATE['aberto'] = not MENU_STATE['aberto']
-
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
@@ -379,11 +381,29 @@ def toggle_menu():
 @ui.page('/history')
 def history_page():
     
+    with ui.column().classes('fixed bottom-5 right-5 z-100 gap-3 items-center'):
+
+        # declaração do botão de histórico
+        ui.button(icon='bar_chart', on_click=lambda: go_to_page('dashboard','history')) \
+            .classes('rounded-full w-12 h-12 !bg-indigo-900 !hover:bg-indigo-600 shadow-xl text-white') \
+            .bind_visibility_from(MENU_STATE, 'aberto') # só aparece se 'aberto' for True
+
+        # declaração do botão da página inicial
+        ui.button(icon='home', on_click=lambda: go_to_page('home', 'history')) \
+            .classes('rounded-full w-12 h-12 !bg-blue-900 !hover:bg-blue-600 shadow-xl text-white') \
+            .bind_visibility_from(MENU_STATE, 'aberto') # só aparece se 'aberto' for True
+
+        # declaração do botão de controle desse "menu"
+        ui.button(on_click=toggle_menu) \
+            .classes('rounded-full w-16 h-16 !bg-slate-800 !hover:bg-slate-700 shadow-2xl text-white text-xl border-2 border-slate-600') \
+            .bind_icon_from(MENU_STATE, 'aberto', 
+                    backward=lambda x: 'close' if x else 'menu')
+        
     p = ui.pagination(1, 5, direction_links=True)
     ui.label().bind_text_from(p, 'value', lambda v: f'Page {v}')
 
-ui.run()
 
+ui.run()
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
