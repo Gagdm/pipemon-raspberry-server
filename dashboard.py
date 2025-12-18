@@ -234,7 +234,7 @@ def flow_expansions():
     # cria uma expansão, uma para cada sensor no sistema
     for i in range(NUM_SENSORS):
 
-        # verifica se os sensores estão conectados, caso contrário, haverá avisos!
+        # caso em que o sensor está disconectado
         if CURRENT_FLOW[i] == 0.00:
             with ui.expansion(f'Sensor de Vazão {i+1}', icon='sensors_off') \
                 .classes('w-full bg-slate-800 text-gray-500 rounded-xl mb-2 border-2 border-red-700 shadow-lg'):
@@ -242,7 +242,6 @@ def flow_expansions():
                 # o que aparecerá quando abrir a expansão
                 with ui.row().classes('w-full items-center justify-between p-2'):
                     
-                    # mostrará o último valor lido do sensor de temperatura
                     with ui.column():
                         ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
                         ui.label(f'0.00L/s').classes('text-4xl font-mono text-gray-900 font-bold')
@@ -252,7 +251,7 @@ def flow_expansions():
                         ui.label('Status: Disconectado').classes('text-sm text-red-400')
                         ui.label(f'Última atualização: 00:00:00').classes('text-xs text-gray-500')
 
-        # caso em que os sensores estão conectados
+        # caso em que o sensor está conectado
         else: 
             with ui.expansion(f'Sensor de Vazão {i+1}', icon='waves') \
                 .classes('w-full bg-slate-800 text-white rounded-xl mb-2 border border-slate-700 shadow-lg'):
@@ -260,7 +259,7 @@ def flow_expansions():
                 # o que aparecerá quando abrir a expansão
                 with ui.row().classes('w-full items-center justify-between p-2'):
                     
-                    # mostrará o último valor lido do sensor de temperatura
+                    # mostrará o último valor lido do sensor de vazão
                     with ui.column():
                         ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
                         ui.label(f'{CURRENT_FLOW[i]:.2f}L/s').classes('text-4xl font-mono text-emerald-400 font-bold')
@@ -269,6 +268,70 @@ def flow_expansions():
                     with ui.column().classes('items-end'):
                         ui.label('Status: Ativo').classes('text-sm text-green-400')
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-xs text-gray-500')
+#-----------------------------------------------------------------------------------------------------------------
+# função para utilizar no timer e recarregar a página das vazões
+@ui.refreshable
+def stretch_expansions():
+    
+    CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
+
+    # cria uma expansão a cada 2 sensores no sistema
+    for i in range(NUM_SENSORS-1):
+        # calcula a diferença entre as vazões lidas
+        dif_current_flow = CURRENT_FLOW[i] - CURRENT_FLOW[i+1]
+
+        # caso em que algum sensor está disconetado
+        if CURRENT_FLOW[i] == 0 or CURRENT_FLOW[i+1] == 0:
+            with ui.expansion(f'Trecho {i+1}', icon='sensors_off') \
+                .classes('w-full bg-slate-800 text-gray-500 rounded-xl mb-2 border-2 border-red-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    with ui.column():
+                        ui.label('Diferença atual entre as vazões').classes('text-xs text-gray-400 uppercase tracking-wider')
+                        ui.label(f'0.00L/s').classes('text-4xl font-mono text-gray-900 font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label('Última atualização: 00:00:00').classes('text-sm text-red-400')
+                        ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-500')
+
+        # caso em que a vazão está normal
+        elif CURRENT_FLOW[i] - CURRENT_FLOW[i+1] <= DIF_ACCEPT_FLOW:
+            with ui.expansion(f'Trecho {i+1}', icon='linear_scale') \
+                .classes('w-full bg-slate-800 text-white rounded-xl mb-2 border border-slate-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    # mostrará o último valor lido do sensor de temperatura
+                    with ui.column():
+                        ui.label('Diferença atual entre as vazões').classes('text-xs text-gray-400 uppercase tracking-wider')
+                        ui.label(f'{dif_current_flow:.2f}L/s').classes('text-4xl font-mono text-emerald-400 font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-sm text-green-400')
+                        ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-500')
+        
+        # caso em que a diferença de vazão é maior que 1
+        else: 
+            with ui.expansion(f'Trecho {i+1}', icon='water_drop') \
+                .classes('w-full bg-red-800 text-white rounded-xl mb-2 border border-red-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    # mostrará o último valor lido do sensor de temperatura
+                    with ui.column():
+                        ui.label('Diferença atual entre as vazões').classes('text-xs text-red-400 uppercase tracking-wider')
+                        ui.label(f'{dif_current_flow:.2f}L/s').classes('text-4xl font-mono text-white font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-sm text-white')
+                        ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-300')
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
@@ -313,6 +376,8 @@ def dashboard_page():
                     flow_expansions()
                     ui.separator()
                     ui.timer(60, flow_expansions.refresh)
+                    stretch_expansions()
+                    ui.timer(60, stretch_expansions.refresh)
 
 ui.run()
 #----------------------------------------------------------------------------------------------------------------- 
