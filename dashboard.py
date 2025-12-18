@@ -16,8 +16,11 @@ NUM_SENSORS = 2
 MAX_TEMP = 27
 MIM_TEMP = 20
 DISC_TEMP = -127
-CURRENT_TEMPERATURE = [25, 23]
-CURRENT_TIME = ''
+CURRENT_TEMPERATURE = [0.0] * NUM_SENSORS
+CURRENT_TEMP_TIME = ''
+CURRENT_FLOW_TIME = ''
+CURRENT_FLOW = [0.0] * NUM_SENSORS
+DIF_ACCEPT_FLOW = 1
 #-----------------------------------------------------------------------------------------------------------------
 # Caminho de arquivos e diretórios
 BASE_DIR = Path(__file__).parent
@@ -140,6 +143,132 @@ def get_current_data(arc):
     # se a linha estiver quebrada/incompleta
     return ('00:00:00', [])
 #-----------------------------------------------------------------------------------------------------------------
+# função para utilizar no timer e recarregar a página
+@ui.refreshable
+def temp_expansions():
+
+    # pega as últimas temperaturas 
+    CURRENT_TEMP_TIME, CURRENT_TEMPERATURE = get_current_data('temp')
+
+    # cria uma expansão, uma para cada sensor no sistema
+    for i in range(NUM_SENSORS):
+
+        # verifica se a temperatura está dentro do esperado, caso contrário, haverá avisos!
+        if CURRENT_TEMPERATURE[i] > MIM_TEMP and CURRENT_TEMPERATURE[i] < MAX_TEMP:
+            with ui.expansion(f'Sensor de Temperatura {i+1}', icon='device_thermostat') \
+                .classes('w-full bg-slate-800 text-white rounded-xl mb-2 border border-slate-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    # mostrará o último valor lido do sensor de temperatura
+                    with ui.column():
+                        ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
+                        ui.label(f'{CURRENT_TEMPERATURE[i]:.1f}°C').classes('text-4xl font-mono text-emerald-400 font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label('Status: Ativo').classes('text-sm text-green-400')
+                        ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-500')
+        
+        # caso a temperatura esteja acima do esperado
+        elif CURRENT_TEMPERATURE[i] > MAX_TEMP:
+            with ui.expansion(f'Sensor de Temperatura {i+1}', icon='whatshot') \
+                .classes('w-full bg-red-800 text-white rounded-xl mb-2 border border-red-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    # mostrará o último valor lido do sensor de temperatura
+                    with ui.column():
+                        ui.label('Leitura Atual').classes('text-xs text-red-400 uppercase tracking-wider')
+                        ui.label(f'{CURRENT_TEMPERATURE[i]:.1f}°C').classes('text-4xl font-mono text-white font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label('Status: Ativo').classes('text-sm text-white')
+                        ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
+
+        # caso o sensor esteja desconectado
+        elif CURRENT_TEMPERATURE[i] == DISC_TEMP:
+            with ui.expansion(f'Sensor de Temperatura {i+1}', icon='sensors_off') \
+                .classes('w-full bg-slate-800 text-gray-500 rounded-xl mb-2 border-2 border-red-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    # mostrará o último valor lido do sensor de temperatura
+                    with ui.column():
+                        ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
+                        ui.label(f'0.0 °C').classes('text-4xl font-mono text-gray-900 font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label('Status: Disconectado').classes('text-sm text-red-400')
+                        ui.label(f'Última atualização: 00:00:00').classes('text-xs text-gray-500')
+        
+        #caso a temperatura esteja baixa
+        else:
+            with ui.expansion(f'Sensor de Temperatura {i+1}', icon='ac_unit') \
+                .classes('w-full bg-blue-900 text-white rounded-xl mb-2 border border-blue-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    # mostrará o último valor lido do sensor de temperatura
+                    with ui.column():
+                        ui.label('Leitura Atual').classes('text-xs text-blue-400 uppercase tracking-wider')
+                        ui.label(f'{CURRENT_TEMPERATURE[i]:.1f}°C').classes('text-4xl font-mono text-white font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label('Status: Ativo').classes('text-sm text-white')
+                        ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
+#-----------------------------------------------------------------------------------------------------------------
+def flow_expansions():
+    # pega as últimas vazões 
+    CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
+
+    # cria uma expansão, uma para cada sensor no sistema
+    for i in range(NUM_SENSORS):
+
+        # verifica se os sensores estão conectados, caso contrário, haverá avisos!
+        if CURRENT_FLOW[i] == 0.00:
+            with ui.expansion(f'Sensor de Vazão {i+1}', icon='sensors_off') \
+                .classes('w-full bg-slate-800 text-gray-500 rounded-xl mb-2 border-2 border-red-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    # mostrará o último valor lido do sensor de temperatura
+                    with ui.column():
+                        ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
+                        ui.label(f'0.00 L/s').classes('text-4xl font-mono text-gray-900 font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label('Status: Disconectado').classes('text-sm text-red-400')
+                        ui.label(f'Última atualização: 00:00:00').classes('text-xs text-gray-500')
+
+        # caso em que os sensores estão conectados
+        else: 
+            with ui.expansion(f'Sensor de Vazão {i+1}', icon='waves') \
+                .classes('w-full bg-slate-800 text-white rounded-xl mb-2 border border-slate-700 shadow-lg'):
+        
+                # o que aparecerá quando abrir a expansão
+                with ui.row().classes('w-full items-center justify-between p-2'):
+                    
+                    # mostrará o último valor lido do sensor de temperatura
+                    with ui.column():
+                        ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
+                        ui.label(f'{CURRENT_FLOW[i]:.1f}°C').classes('text-4xl font-mono text-emerald-400 font-bold')
+
+                    # mostrará o status do sensor
+                    with ui.column().classes('items-end'):
+                        ui.label('Status: Ativo').classes('text-sm text-green-400')
+                        ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-xs text-gray-500')
+        
+        
 
 #==================================================================================================================
 # ------------------------------------------------- DASHBOARD --------------------------------------------------
@@ -164,97 +293,23 @@ def dashboard_page():
 
             # ajustes visuais nas abas de seleção interativa
             with ui.tabs().classes('w-full').props('align="justify"') as tabs:
-                temp = ui.tab('Temperature')
-                flow = ui.tab('Flow')
+                temp = ui.tab('Temperatura')
+                flow = ui.tab('Vazão')
 
             # cria as abas de seleção interativa e, através de uma ação, faz o chaveamento de qual aba mostrar
             with ui.tab_panels(tabs, value=flow).classes('w-full p-4'):
 
                 # aba "TEMPERATURE" mostrará o gráfico das temperaturas recebidas ao longo do tempo
                 with ui.tab_panel(temp):
-
-                    # cria uma expansão, uma para cada sensor no sistema
-                    for i in range(NUM_SENSORS):
-
-                        CURRENT_TIME, CURRENT_TEMPERATURE = get_current_data('temp')
-
-                        # verifica se a temperatura está dentro do esperado, caso contrário, haverá avisos!
-                        if CURRENT_TEMPERATURE[i] > MIM_TEMP and CURRENT_TEMPERATURE[i] < MAX_TEMP:
-                            with ui.expansion(f'Sensor de Temperatura {i+1}', icon='device_thermostat') \
-                                .classes('w-full bg-slate-800 text-white rounded-xl mb-2 border border-slate-700 shadow-lg'):
-                        
-                                # o que aparecerá quando abrir a expansão
-                                with ui.row().classes('w-full items-center justify-between p-2'):
-                                    
-                                    # mostrará o último valor lido do sensor de temperatura
-                                    with ui.column():
-                                        ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
-                                        ui.label(f'{CURRENT_TEMPERATURE[i]:.1f}°C').classes('text-4xl font-mono text-emerald-400 font-bold')
-
-                                    # mostrará o status do sensor
-                                    with ui.column().classes('items-end'):
-                                        ui.label('Status: Ativo').classes('text-sm text-green-400')
-                                        ui.label(f'Última atualização: {CURRENT_TIME}').classes('text-xs text-gray-500')
-                        
-                        # caso a temperatura esteja acima do esperado
-                        elif CURRENT_TEMPERATURE[i] > MAX_TEMP:
-
-                            with ui.expansion(f'Sensor de Temperatura {i+1}', icon='whatshot') \
-                                .classes('w-full bg-red-800 text-white rounded-xl mb-2 border border-red-700 shadow-lg'):
-                        
-                                # o que aparecerá quando abrir a expansão
-                                with ui.row().classes('w-full items-center justify-between p-2'):
-                                    
-                                    # mostrará o último valor lido do sensor de temperatura
-                                    with ui.column():
-                                        ui.label('Leitura Atual').classes('text-xs text-red-400 uppercase tracking-wider')
-                                        ui.label(f'{CURRENT_TEMPERATURE[i]:.1f}°C').classes('text-4xl font-mono text-white font-bold')
-
-                                    # mostrará o status do sensor
-                                    with ui.column().classes('items-end'):
-                                        ui.label('Status: Ative').classes('text-sm text-white')
-                                        ui.label(f'Última atualização: {CURRENT_TIME}').classes('text-xs text-gray-300')
-
-                        # caso o sensor esteja desconectado
-                        elif CURRENT_TEMPERATURE[i] == DISC_TEMP:
-                            with ui.expansion(f'Sensor de Temperatura {i+1}', icon='whatshot') \
-                                .classes('w-full bg-slate-800 text-gray-500 rounded-xl mb-2 border border-slate-700 shadow-lg'):
-                        
-                                # o que aparecerá quando abrir a expansão
-                                with ui.row().classes('w-full items-center justify-between p-2'):
-                                    
-                                    # mostrará o último valor lido do sensor de temperatura
-                                    with ui.column():
-                                        ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
-                                        ui.label(f'0.0 °C').classes('text-4xl font-mono text-gray-900 font-bold')
-
-                                    # mostrará o status do sensor
-                                    with ui.column().classes('items-end'):
-                                        ui.label('Status: Disconnected').classes('text-sm text-red-400')
-                                        ui.label(f'Última atualização: 00:00:00').classes('text-xs text-gray-500')
-                        
-                        #caso a temperatura esteja baixa
-                        else:
-
-                            with ui.expansion(f'Sensor de Temperatura {i+1}', icon='ac_unit') \
-                                .classes('w-full bg-blue-900 text-white rounded-xl mb-2 border border-blue-700 shadow-lg'):
-                        
-                                # o que aparecerá quando abrir a expansão
-                                with ui.row().classes('w-full items-center justify-between p-2'):
-                                    
-                                    # mostrará o último valor lido do sensor de temperatura
-                                    with ui.column():
-                                        ui.label('Leitura Atual').classes('text-xs text-blue-400 uppercase tracking-wider')
-                                        ui.label(f'{CURRENT_TEMPERATURE[i]:.1f}°C').classes('text-4xl font-mono text-white font-bold')
-
-                                    # mostrará o status do sensor
-                                    with ui.column().classes('items-end'):
-                                        ui.label('Status: Ative').classes('text-sm text-white')
-                                        ui.label(f'Última atualização: {CURRENT_TIME}').classes('text-xs text-gray-300')
-
+                    # carrega a página e faz o reload a cada 60 segs
+                    temp_expansions()
+                    ui.separator()
+                    
+                    ui.timer(60, temp_expansions.refresh)
+                    
                 # aba "FLOW" mostrará o gráfico das vazões recebidas ao longo do tempo
                 with ui.tab_panel(flow):
-                    ui.label('Conteúdo da segunda aba - gráfico da vazão')
+                    flow_expansions()
 
 ui.run()
 #----------------------------------------------------------------------------------------------------------------- 
