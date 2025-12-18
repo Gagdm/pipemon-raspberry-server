@@ -143,7 +143,7 @@ def get_current_data(arc):
     # se a linha estiver quebrada/incompleta
     return ('00:00:00', [])
 #-----------------------------------------------------------------------------------------------------------------
-# função para utilizar no timer e recarregar a página
+# função para utilizar no timer e recarregar a página das temperaturas
 @ui.refreshable
 def temp_expansions():
 
@@ -200,7 +200,7 @@ def temp_expansions():
                     # mostrará o último valor lido do sensor de temperatura
                     with ui.column():
                         ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
-                        ui.label(f'0.0 °C').classes('text-4xl font-mono text-gray-900 font-bold')
+                        ui.label(f'0.0°C').classes('text-4xl font-mono text-gray-900 font-bold')
 
                     # mostrará o status do sensor
                     with ui.column().classes('items-end'):
@@ -225,6 +225,8 @@ def temp_expansions():
                         ui.label('Status: Ativo').classes('text-sm text-white')
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
 #-----------------------------------------------------------------------------------------------------------------
+# função para utilizar no timer e recarregar a página das vazões
+@ui.refreshable
 def flow_expansions():
     # pega as últimas vazões 
     CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
@@ -243,7 +245,7 @@ def flow_expansions():
                     # mostrará o último valor lido do sensor de temperatura
                     with ui.column():
                         ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
-                        ui.label(f'0.00 L/s').classes('text-4xl font-mono text-gray-900 font-bold')
+                        ui.label(f'0.00L/s').classes('text-4xl font-mono text-gray-900 font-bold')
 
                     # mostrará o status do sensor
                     with ui.column().classes('items-end'):
@@ -261,14 +263,13 @@ def flow_expansions():
                     # mostrará o último valor lido do sensor de temperatura
                     with ui.column():
                         ui.label('Leitura Atual').classes('text-xs text-gray-400 uppercase tracking-wider')
-                        ui.label(f'{CURRENT_FLOW[i]:.1f}°C').classes('text-4xl font-mono text-emerald-400 font-bold')
+                        ui.label(f'{CURRENT_FLOW[i]:.2f}L/s').classes('text-4xl font-mono text-emerald-400 font-bold')
 
                     # mostrará o status do sensor
                     with ui.column().classes('items-end'):
                         ui.label('Status: Ativo').classes('text-sm text-green-400')
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-xs text-gray-500')
-        
-        
+#-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
 # ------------------------------------------------- DASHBOARD --------------------------------------------------
@@ -304,12 +305,14 @@ def dashboard_page():
                     # carrega a página e faz o reload a cada 60 segs
                     temp_expansions()
                     ui.separator()
-                    
                     ui.timer(60, temp_expansions.refresh)
                     
                 # aba "FLOW" mostrará o gráfico das vazões recebidas ao longo do tempo
                 with ui.tab_panel(flow):
+                    # carrega a página e faz o reload a cada 60 segs
                     flow_expansions()
+                    ui.separator()
+                    ui.timer(60, flow_expansions.refresh)
 
 ui.run()
 #----------------------------------------------------------------------------------------------------------------- 
