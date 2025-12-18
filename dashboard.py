@@ -21,9 +21,12 @@ CURRENT_TEMP_TIME = ''
 CURRENT_FLOW_TIME = ''
 CURRENT_FLOW = [0.0] * NUM_SENSORS
 DIF_ACCEPT_FLOW = 1
+MENU_STATE = {'aberto': False}
+MENU_ICON = ''
 #-----------------------------------------------------------------------------------------------------------------
 # Caminho de arquivos e diretórios
 BASE_DIR = Path(__file__).parent
+DEBUG_FILE = BASE_DIR / 'logs' / 'debug_sensors.txt'
 TEMP_SENSORS_DATA_FILE = BASE_DIR / 'sensors_data' / 'temp_sensors_data.txt'
 FLOW_SENSORS_DATA_FILE = BASE_DIR / 'sensors_data' / 'flow_sensors_data.txt'
 ASSETS_FOLDER = BASE_DIR / 'assets'
@@ -68,7 +71,7 @@ async def go_to_page(new_page, current_page):
         # gera notificações e simula o tempo de boot
         ui.notify('Fechando arquivos...', type='ongoing')
         await asyncio.sleep(1.2) 
-        ui.notify('Redirecionando para Home...', type='ongoing')
+        ui.notify('Redirecionando para página inicial...', type='ongoing')
         await asyncio.sleep(1.5) 
         # direciona para a Home
         ui.navigate.to('/')
@@ -226,7 +229,6 @@ def temp_expansions():
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
 #-----------------------------------------------------------------------------------------------------------------
 # função para utilizar no timer e recarregar a página das vazões
-@ui.refreshable
 def flow_expansions():
     # pega as últimas vazões 
     CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
@@ -270,7 +272,6 @@ def flow_expansions():
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-xs text-gray-500')
 #-----------------------------------------------------------------------------------------------------------------
 # função para utilizar no timer e recarregar a página das vazões
-@ui.refreshable
 def stretch_expansions():
     
     CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
@@ -333,6 +334,15 @@ def stretch_expansions():
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-sm text-white')
                         ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-300')
 #-----------------------------------------------------------------------------------------------------------------
+@ui.refreshable
+def refresh_expansions():  
+    flow_expansions()
+    stretch_expansions()
+#-----------------------------------------------------------------------------------------------------------------
+def toggle_menu():
+    # inverte o estado do menu
+    MENU_STATE['aberto'] = not MENU_STATE['aberto']
+#-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
 # ------------------------------------------------- DASHBOARD --------------------------------------------------
@@ -367,7 +377,6 @@ def dashboard_page():
                 with ui.tab_panel(temp):
                     # carrega a página e faz o reload a cada 60 segs
                     temp_expansions()
-                    ui.separator()
                     ui.timer(60, temp_expansions.refresh)
                     
                 # aba "FLOW" mostrará o gráfico das vazões recebidas ao longo do tempo
@@ -375,13 +384,30 @@ def dashboard_page():
                     # carrega a página e faz o reload a cada 60 segs
                     flow_expansions()
                     ui.separator()
-                    ui.timer(60, flow_expansions.refresh)
                     stretch_expansions()
-                    ui.timer(60, stretch_expansions.refresh)
+                    ui.timer(60, refresh_expansions.refresh)
+        
+        with ui.column().classes('fixed bottom-5 right-5 z-100 gap-3 items-center'):
+
+            # declaração do botão de histórico
+            ui.button(icon='history', on_click=lambda: go_to_page('history','dashboard')) \
+                .classes('rounded-full w-12 h-12 !bg-indigo-900 !hover:bg-indigo-600 shadow-xl text-white') \
+                .bind_visibility_from(MENU_STATE, 'aberto') # só aparece se 'aberto' for True
+
+            # declaração do botão da página inicial
+            ui.button(icon='home', on_click=lambda: go_to_page()) \
+                .classes('rounded-full w-12 h-12 !bg-blue-900 !hover:bg-blue-600 shadow-xl text-white') \
+                .bind_visibility_from(MENU_STATE, 'aberto') # só aparece se 'aberto' for True
+
+            # declaração do botão de controle desse "menu"
+            ui.button(on_click=toggle_menu) \
+                .classes('rounded-full w-16 h-16 !bg-slate-800 !hover:bg-slate-700 shadow-2xl text-white text-xl border-2 border-slate-600') \
+                .bind_icon_from(MENU_STATE, 'aberto', 
+                        backward=lambda x: 'close' if x else 'menu')
 
 ui.run()
 #----------------------------------------------------------------------------------------------------------------- 
-
+    
 #==================================================================================================================
 # ----------------------------------------------- PÁGINA INICIAL ------------------------------------------------
 #==================================================================================================================
