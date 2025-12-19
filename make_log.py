@@ -18,6 +18,7 @@ DIF_ACCEPT_FLOW = 1
 DISC_FLOW = -127
 MENU_STATE = {'aberto': False}
 MENU_ICON = ''
+
 #-----------------------------------------------------------------------------------------------------------------
 # Caminho de arquivos e diretórios
 BASE_DIR = Path(__file__).parent

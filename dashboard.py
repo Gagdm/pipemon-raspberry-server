@@ -42,6 +42,506 @@ else:
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
+# -------------------------------------------- DEFINITION OF GRAPHICS ---------------------------------------------
+#==================================================================================================================
+
+#-----------------------------------------------------------------------------------------------------------------
+@ui.refreshable
+def define_and_update_graphic_temp1():
+
+    CURRENT_TEMP_TIME, CURRENT_TEMPERATURE = get_current_data('temp')
+
+    data_temp = get_all_data('temp')
+    time_list = []
+    values_list = []
+
+    if CURRENT_TEMPERATURE[0] >= MIN_TEMP and CURRENT_TEMPERATURE[0] <= MAX_TEMP:
+        CHART_SENSOR_TEMP1 = ui.echart({
+                'title': {
+                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#FFFFFF", 'rotate': 45},
+                    'color': '#CBD5E1',
+                    'axisLine': {
+                        'lineStyle': {'color': "#FFFFFF"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Temperatura (°C)',
+                    'nameTextStyle': {'color': "#FFFFFF"},
+                    'min': -127,
+                    'max': 50,
+                    'axisLabel': {'color': '#FFFFFF'}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': '#FFFFFF'} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#FFFFFF", # Cinza escuro (para não ofuscar o gráfico)
+                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#2FBE5F", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#A8F3A5"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': "#104600",      
+                        'borderColor': "#D3E7CC", 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+        
+    elif CURRENT_TEMPERATURE[0] > MAX_TEMP:
+        CHART_SENSOR_TEMP1 = ui.echart({
+                'title': {
+                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#FFFFFF", 'rotate': 45},
+                    'color': '#CBD5E1',
+                    'axisLine': {
+                        'lineStyle': {'color': "#EB8B5F"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Temperatura (°C)',
+                    'nameTextStyle': {'color': "#FFFFFF"},
+                    'min': -127,
+                    'max': 50,
+                    'axisLabel': {'color': '#FFFFFF'}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': '#FFFFFF'} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#DB977C", # Cinza escuro (para não ofuscar o gráfico)
+                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#FF5E00", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#F3BBA5"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': '#FACC15',      
+                        'borderColor': '#FFFFFF', 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+    
+    elif CURRENT_TEMPERATURE[0] == DISC_TEMP:
+        CHART_SENSOR_TEMP1 = ui.echart({
+                'title': {
+                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#554F4F"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#776F6F", 'rotate': 45},
+                    'color': "#515355",
+                    'axisLine': {
+                        'lineStyle': {'color': "#807D7B"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Temperatura (°C)',
+                    'nameTextStyle': {'color': "#807979"},
+                    'min': -127,
+                    'max': 50,
+                    'axisLabel': {'color': "#928D8D"}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': "#615B5B"} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#999593", 
+                            'type': 'dashed'    
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#770000", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#AC7575"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': "#302F2C",      
+                        'borderColor': '#FFFFFF', 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+    
+    else:
+        CHART_SENSOR_TEMP1 = ui.echart({
+                'title': {
+                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#FFFFFF", 'rotate': 45},
+                    'color': '#CBD5E1',
+                    'axisLine': {
+                        'lineStyle': {'color': "#98DADA"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Temperatura (°C)',
+                    'nameTextStyle': {'color': "#FFFFFF"},
+                    'min': -127,
+                    'max': 50,
+                    'axisLabel': {'color': '#FFFFFF'}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': '#FFFFFF'} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#98BDC4", # Cinza escuro (para não ofuscar o gráfico)
+                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#62B3FF", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#8CC6CA"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': "#00DDFA",      
+                        'borderColor': '#FFFFFF', 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+
+    for row in data_temp:
+        
+        if len(row) == 3:
+            time_list.append(row[0])
+            values_list.append(float(row[1]))
+
+    # Atualiza o gráfico
+    CHART_SENSOR_TEMP1.options['xAxis']['data'] = time_list
+    CHART_SENSOR_TEMP1.options['series'][0]['data'] = values_list
+    CHART_SENSOR_TEMP1.update()
+#-----------------------------------------------------------------------------------------------------------------
+@ui.refreshable
+def define_and_update_graphic_temp2():
+
+    CURRENT_TEMP_TIME, CURRENT_TEMPERATURE = get_current_data('temp')
+
+    data_temp = get_all_data('temp')
+    time_list = []
+    values_list = []
+
+    if CURRENT_TEMPERATURE[1] >= MIN_TEMP and CURRENT_TEMPERATURE[1] <= MAX_TEMP:
+        CHART_SENSOR_TEMP1 = ui.echart({
+                'title': {
+                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#FFFFFF", 'rotate': 45},
+                    'color': '#CBD5E1',
+                    'axisLine': {
+                        'lineStyle': {'color': "#FFFFFF"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Temperatura (°C)',
+                    'nameTextStyle': {'color': "#FFFFFF"},
+                    'min': -127,
+                    'max': 50,
+                    'axisLabel': {'color': '#FFFFFF'}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': '#FFFFFF'} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#FFFFFF", # Cinza escuro (para não ofuscar o gráfico)
+                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#2FBE5F", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#A8F3A5"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': "#104600",      
+                        'borderColor': "#D3E7CC", 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+        
+    elif CURRENT_TEMPERATURE[1] > MAX_TEMP:
+        CHART_SENSOR_TEMP1 = ui.echart({
+                'title': {
+                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#FFFFFF", 'rotate': 45},
+                    'color': '#CBD5E1',
+                    'axisLine': {
+                        'lineStyle': {'color': "#EB8B5F"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Temperatura (°C)',
+                    'nameTextStyle': {'color': "#FFFFFF"},
+                    'min': -127,
+                    'max': 50,
+                    'axisLabel': {'color': '#FFFFFF'}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': '#FFFFFF'} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#DB977C", # Cinza escuro (para não ofuscar o gráfico)
+                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#FF5E00", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#F3BBA5"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': '#FACC15',      
+                        'borderColor': '#FFFFFF', 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+    
+    elif CURRENT_TEMPERATURE[1] == DISC_TEMP:
+        CHART_SENSOR_TEMP1 = ui.echart({
+                'title': {
+                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#554F4F"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#776F6F", 'rotate': 45},
+                    'color': "#515355",
+                    'axisLine': {
+                        'lineStyle': {'color': "#807D7B"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Temperatura (°C)',
+                    'nameTextStyle': {'color': "#807979"},
+                    'min': -127,
+                    'max': 50,
+                    'axisLabel': {'color': "#928D8D"}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': "#615B5B"} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#999593", 
+                            'type': 'dashed'    
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#770000", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#AC7575"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': "#302F2C",      
+                        'borderColor': '#FFFFFF', 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+    
+    else:
+        CHART_SENSOR_TEMP1 = ui.echart({
+                'title': {
+                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#FFFFFF", 'rotate': 45},
+                    'color': '#CBD5E1',
+                    'axisLine': {
+                        'lineStyle': {'color': "#98DADA"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Temperatura (°C)',
+                    'nameTextStyle': {'color': "#FFFFFF"},
+                    'min': -127,
+                    'max': 50,
+                    'axisLabel': {'color': '#FFFFFF'}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': '#FFFFFF'} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#98BDC4", # Cinza escuro (para não ofuscar o gráfico)
+                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#62B3FF", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#8CC6CA"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': "#00DDFA",      
+                        'borderColor': '#FFFFFF', 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+
+    for row in data_temp:
+        
+        if len(row) == 3:
+            time_list.append(row[0])
+            values_list.append(float(row[2]))
+
+    # Atualiza o gráfico
+    CHART_SENSOR_TEMP1.options['xAxis']['data'] = time_list
+    CHART_SENSOR_TEMP1.options['series'][0]['data'] = values_list
+    CHART_SENSOR_TEMP1.update()
+#-----------------------------------------------------------------------------------------------------------------
+
+#==================================================================================================================
 # ------------------------------------------------- UTILITIES --------------------------------------------------
 #==================================================================================================================
 
@@ -177,6 +677,47 @@ def get_current_data(arc):
     # se a linha estiver quebrada/incompleta
     return ('00:00:00', [])
 #-----------------------------------------------------------------------------------------------------------------
+def get_all_data(arc):
+
+    linhas = [] 
+    dados = []
+    arch = ""
+
+    # define o arquivo que quero acessar
+    if arc == 'temp':
+        arch = TEMP_SENSORS_DATA_FILE
+    elif arc == "flow":
+        arch = FLOW_DIFFERENCE_FILE
+    else:
+        return dados
+
+    # tenta ler o arquivo, caso haja algum erro, cria uma excessão
+    try:
+        # caso o arquivo não exista
+        if not os.path.exists(arch):
+            print("Arquivo não existe!")
+            return dados
+
+        # abre o arquivo apenas para leitura
+        with open(arch, 'r') as f:
+            linhas = f.readlines()
+        
+    except Exception as e:
+        print(f"Erro ao ler: {e}")
+        return dados
+
+    # proteção contra arquivo vazio
+    if len(linhas) == 0:
+        return dados
+
+    # pega as últimas 20 linhas e separa os dados
+    ultimas_linhas = linhas[-20:] 
+    for linha in ultimas_linhas:
+        partes = linha.strip().split(',')
+        dados.append(partes)
+
+    return dados
+#-----------------------------------------------------------------------------------------------------------------
 # função para utilizar no timer e recarregar a página das temperaturas
 @ui.refreshable
 def temp_expansions():
@@ -204,6 +745,13 @@ def temp_expansions():
                     with ui.column().classes('items-end'):
                         ui.label('Status: Ativo').classes('text-sm text-green-400')
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-500')
+                
+                if i == 0:
+                    define_and_update_graphic_temp1()
+                elif i == 1:
+                    define_and_update_graphic_temp2()
+
+                ui.timer(30, define_and_update_graphic_temp1.refresh)
         
         # caso a temperatura esteja acima do esperado
         elif CURRENT_TEMPERATURE[i] > MAX_TEMP:
@@ -223,6 +771,13 @@ def temp_expansions():
                         ui.label('Status: Ativo').classes('text-sm text-white')
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
 
+                if i == 0:
+                    define_and_update_graphic_temp1()
+                elif i == 1:
+                    define_and_update_graphic_temp2()
+
+                ui.timer(30, define_and_update_graphic_temp1.refresh)
+
         # caso o sensor esteja desconectado
         elif CURRENT_TEMPERATURE[i] == DISC_TEMP:
             with ui.expansion(f'Sensor de Temperatura {i+1}', icon='sensors_off') \
@@ -240,6 +795,13 @@ def temp_expansions():
                     with ui.column().classes('items-end'):
                         ui.label('Status: Disconectado').classes('text-sm text-red-400')
                         ui.label(f'Última atualização: 00:00:00').classes('text-xs text-gray-500')
+
+                if i == 0:
+                    define_and_update_graphic_temp1()
+                elif i == 1:
+                    define_and_update_graphic_temp2()
+
+                ui.timer(30, define_and_update_graphic_temp1.refresh)
         
         #caso a temperatura esteja baixa
         else:
@@ -258,6 +820,15 @@ def temp_expansions():
                     with ui.column().classes('items-end'):
                         ui.label('Status: Ativo').classes('text-sm text-white')
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
+
+                if i == 0:
+                    define_and_update_graphic_temp1()
+                elif i == 1:
+                    define_and_update_graphic_temp2()
+
+                ui.timer(30, define_and_update_graphic_temp1.refresh)
+                ui.timer(30, define_and_update_graphic_temp2.refresh)
+
 #-----------------------------------------------------------------------------------------------------------------
 # função para utilizar no timer e recarregar a página das vazões
 @ui.refreshable
@@ -434,7 +1005,7 @@ def dashboard_page():
                 with ui.tab_panel(temp):
                     # carrega a página e faz o reload a cada 60 segs
                     temp_expansions()
-                    ui.timer(60, temp_expansions.refresh)
+                    ui.timer(30, temp_expansions.refresh)
                     
                 # aba "FLOW" mostrará o gráfico das vazões recebidas ao longo do tempo
                 with ui.tab_panel(flow):
@@ -442,8 +1013,8 @@ def dashboard_page():
                     flow_expansions()
                     ui.separator()
                     stretch_expansions()
-                    ui.timer(60, flow_expansions.refresh)
-                    ui.timer(60, stretch_expansions.refresh)
+                    ui.timer(30, flow_expansions.refresh)
+                    ui.timer(30, stretch_expansions.refresh)
 
         
         with ui.column().classes('fixed bottom-5 right-5 z-100 gap-3 items-center'):
@@ -497,6 +1068,6 @@ def initial_page():
 #==================================================================================================================
 
 #----------------------------------------------------------------------------------------------------------------- 
-if __name__ in {"__main__", "__mp_main__"}:
+if __name__ == "__main__":
     ui.run(title='Sensor App')
 #----------------------------------------------------------------------------------------------------------------- 
