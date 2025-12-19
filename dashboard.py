@@ -303,9 +303,9 @@ def define_and_update_graphic_temp2():
     values_list = []
 
     if CURRENT_TEMPERATURE[1] >= MIN_TEMP and CURRENT_TEMPERATURE[1] <= MAX_TEMP:
-        CHART_SENSOR_TEMP1 = ui.echart({
+        CHART_SENSOR_TEMP2 = ui.echart({
                 'title': {
-                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'text': 'Leituras do Sensor de Temperatura 2',
                     'textStyle': {'color': "#FFFFFF"},
                     'left': 'center',
                     'top': '10' 
@@ -360,9 +360,9 @@ def define_and_update_graphic_temp2():
             }).classes('w-full h-96')
         
     elif CURRENT_TEMPERATURE[1] > MAX_TEMP:
-        CHART_SENSOR_TEMP1 = ui.echart({
+        CHART_SENSOR_TEMP2 = ui.echart({
                 'title': {
-                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'text': 'Leituras do Sensor de Temperatura 2',
                     'textStyle': {'color': "#FFFFFF"},
                     'left': 'center',
                     'top': '10' 
@@ -417,9 +417,9 @@ def define_and_update_graphic_temp2():
             }).classes('w-full h-96')
     
     elif CURRENT_TEMPERATURE[1] == DISC_TEMP:
-        CHART_SENSOR_TEMP1 = ui.echart({
+        CHART_SENSOR_TEMP2 = ui.echart({
                 'title': {
-                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'text': 'Leituras do Sensor de Temperatura 2',
                     'left': 'center',
                     'top': '10' 
                 },
@@ -473,9 +473,9 @@ def define_and_update_graphic_temp2():
             }).classes('w-full h-96')
     
     else:
-        CHART_SENSOR_TEMP1 = ui.echart({
+        CHART_SENSOR_TEMP2 = ui.echart({
                 'title': {
-                    'text': 'Leituras do Sensor de Temperatura 1',
+                    'text': 'Leituras do Sensor de Temperatura 2',
                     'textStyle': {'color': "#FFFFFF"},
                     'left': 'center',
                     'top': '10' 
@@ -536,9 +536,201 @@ def define_and_update_graphic_temp2():
             values_list.append(float(row[2]))
 
     # Atualiza o gráfico
-    CHART_SENSOR_TEMP1.options['xAxis']['data'] = time_list
-    CHART_SENSOR_TEMP1.options['series'][0]['data'] = values_list
-    CHART_SENSOR_TEMP1.update()
+    CHART_SENSOR_TEMP2.options['xAxis']['data'] = time_list
+    CHART_SENSOR_TEMP2.options['series'][0]['data'] = values_list
+    CHART_SENSOR_TEMP2.update()
+#-----------------------------------------------------------------------------------------------------------------
+@ui.refreshable
+def define_and_update_graphic_flow():
+
+    CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
+
+    dif_current_flow = CURRENT_FLOW[0] - CURRENT_FLOW[1]
+
+    data_temp = get_all_data('flow')
+    time_list = []
+    values_list = []
+
+    if CURRENT_FLOW[0] == DISC_FLOW or CURRENT_FLOW[1] == DISC_FLOW:
+        CHART_SENSOR_FLOW = ui.echart({
+                'title': {
+                    'text': 'Diferença de Vazão no Trecho 1',
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#554F4F"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#776F6F", 'rotate': 45},
+                    'color': "#515355",
+                    'axisLine': {
+                        'lineStyle': {'color': "#807D7B"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Diferença de Vazão (L/s)',
+                    'nameTextStyle': {'color': "#807979"},
+                    'min': -10,
+                    'max': 10,
+                    'axisLabel': {'color': "#928D8D"}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': "#615B5B"} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#999593", 
+                            'type': 'dashed'    
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#770000", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#AC7575"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': "#302F2C",      
+                        'borderColor': '#FFFFFF', 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+        
+    elif dif_current_flow <= DIF_ACCEPT_FLOW:
+        CHART_SENSOR_FLOW = ui.echart({
+                'title': {
+                    'text': 'Diferença de Vazão no Trecho 1',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#FFFFFF", 'rotate': 45},
+                    'color': '#CBD5E1',
+                    'axisLine': {
+                        'lineStyle': {'color': "#FFFFFF"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Diferença de Vazão (L/s)',
+                    'nameTextStyle': {'color': "#FFFFFF"},
+                    'min': -10,
+                    'max': 10,
+                    'axisLabel': {'color': '#FFFFFF'}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': '#FFFFFF'} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#FFFFFF", 
+                            'type': 'dashed'    
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#2FBE5F", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#A8F3A5"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': "#104600",      
+                        'borderColor': "#D3E7CC", 
+                        'borderWidth': 2          
+                    }
+                }],
+                 
+            }).classes('w-full h-96')
+    
+    else:
+        CHART_SENSOR_FLOW = ui.echart({
+                'title': {
+                    'text': 'Diferença de Vazão no Trecho 1',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'left': 'center',
+                    'top': '10' 
+                },
+                'tooltip': {'trigger': 'axis'},
+                'xAxis': {
+                    'name': 'Data/Hora',
+                    'textStyle': {'color': "#FFFFFF"},
+                    'type': 'category', 
+                    'data': [], 
+                    'axisLabel': {'color': "#FFFFFF", 'rotate': 45},
+                    'color': '#CBD5E1',
+                    'axisLine': {
+                        'lineStyle': {'color': "#EB8B5F"}
+                    }
+                },
+                'yAxis': {
+                    'type': 'value', 
+                    'name': 'Diferença de Vazão (L/s)',
+                    'nameTextStyle': {'color': "#FFFFFF"},
+                    'min': -10,
+                    'max': 10,
+                    'axisLabel': {'color': '#FFFFFF'}, 
+                    'axisLine': {
+                        'show': True, 
+                        'lineStyle': {'color': '#FFFFFF'} 
+                    },
+                    'splitLine': {
+                        'show': True,
+                        'lineStyle': {
+                            'color': "#DB977C", # Cinza escuro (para não ofuscar o gráfico)
+                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                        }
+                    }
+                },
+                'series': [{
+                    'name': 'Sensor 1',
+                    'type': 'line',
+                    'smooth': True,
+                    'data': [],
+                    'lineStyle': {'color': "#FF5E00", 'width': 3},
+                    'areaStyle': {'opacity': 0.4, 'color': "#F3BBA5"},
+                    'symbol': 'circle', 
+                    'symbolSize': 8,    
+                    'itemStyle': {
+                        'color': '#FACC15',      
+                        'borderColor': '#FFFFFF', 
+                        'borderWidth': 2          
+                    }
+                }],
+
+            }).classes('w-full h-96')
+
+    for row in data_temp:
+        
+        if len(row) == 2:
+            time_list.append(row[1])
+            values_list.append(float(row[0]))
+
+    # Atualiza o gráfico
+    CHART_SENSOR_FLOW.options['xAxis']['data'] = time_list
+    CHART_SENSOR_FLOW.options['series'][0]['data'] = values_list
+    CHART_SENSOR_FLOW.update()
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
@@ -902,6 +1094,11 @@ def stretch_expansions():
                         ui.label('Última atualização: 00:00:00').classes('text-sm text-red-400')
                         ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-500')
 
+                if i == 0:
+                    define_and_update_graphic_flow()
+                
+                ui.timer(30, define_and_update_graphic_flow.refresh)
+
         # caso em que a vazão está normal
         elif CURRENT_FLOW[i] - CURRENT_FLOW[i+1] <= DIF_ACCEPT_FLOW:
             with ui.expansion(f'Trecho {i+1}', icon='linear_scale') \
@@ -919,6 +1116,11 @@ def stretch_expansions():
                     with ui.column().classes('items-end'):
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-sm text-green-400')
                         ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-500')
+            
+                if i == 0:
+                    define_and_update_graphic_flow()
+                
+                ui.timer(30, define_and_update_graphic_flow.refresh)
         
         # caso em que a diferença de vazão é maior que 1
         else: 
@@ -937,6 +1139,11 @@ def stretch_expansions():
                     with ui.column().classes('items-end'):
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-sm text-white')
                         ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-300')
+                
+                if i == 0:
+                    define_and_update_graphic_flow()
+                
+                ui.timer(30, define_and_update_graphic_flow.refresh)
 #-----------------------------------------------------------------------------------------------------------------
 def toggle_menu():
     # inverte o estado do menu
