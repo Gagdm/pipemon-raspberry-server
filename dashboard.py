@@ -972,7 +972,7 @@ def get_all_debug_data():
         partes = linha.strip().split(',')
         dados.append(partes)
 
-    return dados
+    return dados[::-1]
 #-----------------------------------------------------------------------------------------------------------------
 @ui.refreshable
 def update_history():

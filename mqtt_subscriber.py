@@ -44,11 +44,11 @@ def on_message(client, userdata, msg):
         print(f"Temperatura de entrada: {temp_in:.2f}°C | Vazão de entrada: {flow_in:.2f}L/s")
         print(f"Temperatura de saída: {temp_out:.2f}°C | Vazão de saída: {flow_out:.2f}L/s")
         
-        with open(TEMP_FILEPATH, "w") as file:
+        with open(TEMP_FILEPATH, "a") as file:
             file.write(f"{timestamp},{temp_in},{temp_out}\n")
 
         
-        with open(FLOW_FILEPATH, "w") as file:
+        with open(FLOW_FILEPATH, "a") as file:
             file.write(f"{timestamp},{flow_in},{flow_out}\n")
 
         # --- AQUI VOCÊ ADICIONA A LÓGICA DE SALVAR NO BANCO DE DADOS ---
