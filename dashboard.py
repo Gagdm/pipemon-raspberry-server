@@ -942,6 +942,38 @@ def get_debug_data():
 
     return dados
 #-----------------------------------------------------------------------------------------------------------------
+def get_all_debug_data():
+     
+    linhas = [] 
+    dados = []
+
+    # tenta ler o arquivo, caso haja algum erro, cria uma excessão
+    try:
+        # caso o arquivo não exista
+        if not os.path.exists(DEBUG_FILE):
+            print("Arquivo não existe!")
+            return dados
+
+        # abre o arquivo apenas para leitura
+        with open(DEBUG_FILE, 'r') as f:
+            linhas = f.readlines()
+        
+    except Exception as e:
+        print(f"Erro ao ler: {e}")
+        return dados
+
+    # proteção contra arquivo vazio
+    if len(linhas) == 0:
+        return dados
+
+    # pega as últimas 10 linhas e separa os dados
+    ultimas_linhas = linhas[-150:] 
+    for linha in ultimas_linhas:
+        partes = linha.strip().split(',')
+        dados.append(partes)
+
+    return dados
+#-----------------------------------------------------------------------------------------------------------------
 @ui.refreshable
 def update_history():
 
@@ -1214,6 +1246,49 @@ def toggle_menu():
     # inverte o estado do menu
     MENU_STATE['aberto'] = not MENU_STATE['aberto']
 #-----------------------------------------------------------------------------------------------------------------
+def criar_cartao_notificacao(item):
+
+    if len(item) == 2:
+        with ui.card().classes('w-full p-2 bg-slate-100 shadow-sm border border-slate-200'):
+            with ui.row().classes('items-center gap-2'):
+                ui.icon('notifications', color='red').classes('text-xl')
+                ui.label(f"#{item[0]}").classes('font-bold text-slate-700')
+                ui.label(f"{item[1]}").classes('text-xs text-gray-500')
+#-----------------------------------------------------------------------------------------------------------------
+@ui.refreshable
+def renderizar_notificacoes(pagina_atual):
+
+    debug_data = get_all_debug_data()
+
+    items_por_pagina = 30
+    inicio = (pagina_atual - 1) * items_por_pagina
+    fim = inicio + items_por_pagina
+    
+    # Pega apenas os 10 itens dessa página
+    dados_pagina = debug_data[inicio:fim]
+    
+    # Separa: 5 para esquerda, 5 para direita
+    lado_esquerdo = dados_pagina[:15]
+    lado_direito = dados_pagina[15:]
+
+    # --- LAYOUT DAS COLUNAS COM LINHA VERTICAL ---
+    # Usamos grid com 3 colunas: [Conteúdo Esquerda] [Linha] [Conteúdo Direita]
+    with ui.grid().classes('grid-cols-[1fr_auto_1fr] w-full gap-4'):
+        
+        # --- COLUNA ESQUERDA ---
+        with ui.column().classes('w-full gap-3'):
+            for item in lado_esquerdo:
+                criar_cartao_notificacao(item)
+        
+        # --- LINHA VERTICAL (DIVISÓRIA) ---
+        # Uma div fina cinza que ocupa toda a altura (h-full)
+        ui.element('div').classes('w-[2px] bg-slate-300 h-full mx-auto rounded')
+
+        # --- COLUNA DIREITA ---
+        with ui.column().classes('w-full gap-3'):
+            for item in lado_direito:
+                criar_cartao_notificacao(item)
+#-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
 # -------------------------------------------------- HISTORY ---------------------------------------------------
@@ -1241,9 +1316,36 @@ def history_page():
             .bind_icon_from(MENU_STATE, 'aberto', 
                     backward=lambda x: 'close' if x else 'menu')
         
-    p = ui.pagination(1, 5, direction_links=True)
-    ui.label().bind_text_from(p, 'value', lambda v: f'Page {v}')
+    # O Ícone (Tamanho 3em = grande)
+    ui.icon('manage_history', color='blue-800', size='3em')
+    
+    with ui.column().classes('gap-0'):
+        # O Título com a fonte personalizada
+        ui.label('HISTÓRICO') \
+            .classes('fonte-titulo text-4xl text-blue-800 tracking-wide')
+        
+        # Um sublinhado ou detalhe pequeno (opcional)
+        ui.label('Registro de Atividades') \
+            .classes('text-sm text-gray-500 font-bold uppercase tracking-widest')
 
+    # Área que será atualizada (Começa na página 1)
+    renderizar_notificacoes(1)
+
+    # Espaçador para empurrar a paginação para baixo (opcional)
+    ui.space()
+
+    # --- PAGINAÇÃO CENTRALIZADA ---
+    # Container centralizado (items-center)
+    with ui.column().classes('w-full items-center mt-2'):
+        
+        # O componente de paginação
+        paginacao = ui.pagination(1, 5, direction_links=True) \
+            .classes('shadow-lg bg-white rounded-lg')
+        
+        # LÓGICA: Quando mudar o valor, atualiza a função lá em cima
+        paginacao.on_value_change(lambda: renderizar_notificacoes.refresh(paginacao.value))
+
+        ui.timer(30, lambda: renderizar_notificacoes.refresh(paginacao.value))
 
 ui.run()
 #-----------------------------------------------------------------------------------------------------------------
