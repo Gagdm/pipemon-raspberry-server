@@ -910,6 +910,71 @@ def get_all_data(arc):
 
     return dados
 #-----------------------------------------------------------------------------------------------------------------
+def get_debug_data():
+     
+    linhas = [] 
+    dados = []
+
+    # tenta ler o arquivo, caso haja algum erro, cria uma excessão
+    try:
+        # caso o arquivo não exista
+        if not os.path.exists(DEBUG_FILE):
+            print("Arquivo não existe!")
+            return dados
+
+        # abre o arquivo apenas para leitura
+        with open(DEBUG_FILE, 'r') as f:
+            linhas = f.readlines()
+        
+    except Exception as e:
+        print(f"Erro ao ler: {e}")
+        return dados
+
+    # proteção contra arquivo vazio
+    if len(linhas) == 0:
+        return dados
+
+    # pega as últimas 10 linhas e separa os dados
+    ultimas_linhas = linhas[-10:] 
+    for linha in ultimas_linhas:
+        partes = linha.strip().split(',')
+        dados.append(partes)
+
+    return dados
+#-----------------------------------------------------------------------------------------------------------------
+@ui.refreshable
+def update_history():
+
+    debug_data = get_debug_data()
+    count = 0
+
+    for row in debug_data:
+        if len(row) == 2:
+           
+            with ui.timeline(side='right').classes('w-full max-w-md'):
+                
+                if count == 0:
+
+                    ui.timeline_entry(
+                        title=f"{row[0]}",
+                        subtitle=f"{row[1]}",
+                        icon = 'notifications_active',
+                    ).classes('text-xl font-bold text-red-600') \
+                     .props('color=red-600')
+
+                else:
+
+                    ui.timeline_entry(
+                        title=f"{row[0]}",
+                        subtitle=f"{row[1]}",
+                        icon = 'notifications',
+                    ).classes('text-xl font-bold text-black') \
+                     .props('color=red-900')
+                    
+            
+            count = count+1  
+    count = 0
+#-----------------------------------------------------------------------------------------------------------------
 # função para utilizar no timer e recarregar a página das temperaturas
 @ui.refreshable
 def temp_expansions():
@@ -1194,8 +1259,18 @@ def dashboard_page():
     with ui.row().classes('w-full h-screen gap-0 no-wrap'):
         
         # definição da coluna que fica do lado esquerdo da tela e ocupa 1/5 da sua largura
-        with ui.column().classes('w-1/5 bg-slate-100 p-4 border-r border-slate-300'):
-            ui.label('Histórico')
+        with ui.column().classes('w-1/5 bg-gray-100 p-4 border-r border-slate-300'):
+
+            with ui.column().classes('w-full items-center mb-5'):
+    
+                ui.label('Monitoramento') \
+                    .classes('text-red-500 text-sm uppercase tracking-widest')
+                    
+                ui.label('Alertas Recentes') \
+                    .classes('text-3xl font-bold')
+                
+                update_history()
+                ui.timer(30, update_history.refresh)
 
         # definição da coluna que fica do lado direito da tela e ocupa 4/5 de sua largura
         with ui.column().classes('w-4/5 bg-white p-6'):

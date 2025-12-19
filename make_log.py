@@ -130,19 +130,19 @@ if __name__ == "__main__":
 
             # se o sensor de temperatura estiver disconectado
             if CURRENT_TEMPERATURE[i] == DISC_TEMP:
-                debug_file.write(f"Sensor de temperatura {i+1} disconectado!,{CURRENT_TEMP_TIME}\n")
+                debug_file.write(f"SENSOR DE TEMPERATURA {i+1} DISCONECTADO!,{CURRENT_TEMP_TIME}\n")
             
             # se o sensor de vazão estiver disconectado
             if CURRENT_FLOW[i] == DISC_FLOW:
-                debug_file.write(f"Sensor de vazão {i+1} disconectado!,{CURRENT_TEMP_TIME}\n")
+                debug_file.write(f"SENSOR DE VAZÃO {i+1} DISCONECTADO!,{CURRENT_TEMP_TIME}\n")
 
             # se o sentor de temperatura estiver apontando uma temperatura abaixo da esperada
             if CURRENT_TEMPERATURE[i] < MIN_TEMP:
-                debug_file.write(f"Sensor de temperatura {i+1} inferiu uma temperatura mais baixa que o normal!,{CURRENT_TEMP_TIME}\n")
+                debug_file.write(f"SENSOR DE TEMPERATURA {i+1} inferiu uma temperatura MAIS BAIXA que o normal!,{CURRENT_TEMP_TIME}\n")
 
             # se o sentor de temperatura estiver apontando uma temperatura acima da esperada
             if CURRENT_TEMPERATURE[i] > MAX_TEMP:
-                debug_file.write(f"Sensor de temperatura {i+1} inferiu uma temperatura mais alta que o normal!,{CURRENT_TEMP_TIME}\n")
+                debug_file.write(f"SENSOR DE TEMPERATURA {i+1} inferiu uma temperatura MAIS ALTA que o normal!,{CURRENT_TEMP_TIME}\n")
 
         for i in range(NUM_SENSORS-1):
 
@@ -152,7 +152,7 @@ if __name__ == "__main__":
 
             # se a diferença da vazão lida nos sensores de vazão for maior que 1
             if dif_current_flow > DIF_ACCEPT_FLOW:
-                debug_file.write(f"Vazamento detectado no trecho {i+1}!,{CURRENT_TEMP_TIME}\n")
+                debug_file.write(f"VAZAMENTO detectado no TRECHO {i+1}!,{CURRENT_TEMP_TIME}\n")
 
         debug_file.close()
         flow_file.close()
