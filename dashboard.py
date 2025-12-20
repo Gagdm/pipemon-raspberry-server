@@ -7,7 +7,7 @@ import os
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
-# ---------------------------------------------- VARIÁVEIS GLOBAIS -----------------------------------------------
+# ---------------------------------------------- GLOBAL VARIABLES -----------------------------------------------
 #==================================================================================================================
 
 #-----------------------------------------------------------------------------------------------------------------
@@ -46,15 +46,19 @@ else:
 #==================================================================================================================
 
 #-----------------------------------------------------------------------------------------------------------------
+# definição do gráfico do sensor de temperatura 1
 @ui.refreshable
 def define_and_update_graphic_temp1():
 
     CURRENT_TEMP_TIME, CURRENT_TEMPERATURE = get_current_data('temp')
 
+    # pega as 20 últimas linhas do arquivo "temp_sensors_data.txt" para fazer o gráfico
     data_temp = get_all_data('temp')
     time_list = []
     values_list = []
 
+    # a depender do estado em que está a medição, o gráfico será printado com cores diferentes
+    # caso a temperatura medida esteja dentro do intervalo esperado
     if CURRENT_TEMPERATURE[0] >= MIN_TEMP and CURRENT_TEMPERATURE[0] <= MAX_TEMP:
         CHART_SENSOR_TEMP1 = ui.echart({
                 'title': {
@@ -89,8 +93,8 @@ def define_and_update_graphic_temp1():
                     'splitLine': {
                         'show': True,
                         'lineStyle': {
-                            'color': "#FFFFFF", # Cinza escuro (para não ofuscar o gráfico)
-                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                            'color': "#FFFFFF", 
+                            'type': 'dashed'   
                         }
                     }
                 },
@@ -111,7 +115,8 @@ def define_and_update_graphic_temp1():
                 }],
                  
             }).classes('w-full h-96')
-        
+
+    # caso a temperatura medida esteja acima do normal esperado   
     elif CURRENT_TEMPERATURE[0] > MAX_TEMP:
         CHART_SENSOR_TEMP1 = ui.echart({
                 'title': {
@@ -146,8 +151,8 @@ def define_and_update_graphic_temp1():
                     'splitLine': {
                         'show': True,
                         'lineStyle': {
-                            'color': "#DB977C", # Cinza escuro (para não ofuscar o gráfico)
-                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                            'color': "#DB977C", 
+                            'type': 'dashed'   
                         }
                     }
                 },
@@ -169,6 +174,7 @@ def define_and_update_graphic_temp1():
                  
             }).classes('w-full h-96')
     
+    # caso o sensor de temperatura esteja desconectado
     elif CURRENT_TEMPERATURE[0] == DISC_TEMP:
         CHART_SENSOR_TEMP1 = ui.echart({
                 'title': {
@@ -225,6 +231,7 @@ def define_and_update_graphic_temp1():
                  
             }).classes('w-full h-96')
     
+    # caso a temperatura medida seja mais baixa que o normal esperado
     else:
         CHART_SENSOR_TEMP1 = ui.echart({
                 'title': {
@@ -259,8 +266,8 @@ def define_and_update_graphic_temp1():
                     'splitLine': {
                         'show': True,
                         'lineStyle': {
-                            'color': "#98BDC4", # Cinza escuro (para não ofuscar o gráfico)
-                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                            'color': "#98BDC4", 
+                            'type': 'dashed'   
                         }
                     }
                 },
@@ -282,26 +289,29 @@ def define_and_update_graphic_temp1():
                  
             }).classes('w-full h-96')
 
+    # checa se a linha está completa, separa os tipos de dados e atualiza o gráfico para os novos valores
     for row in data_temp:
-        
         if len(row) == 3:
             time_list.append(row[0])
             values_list.append(float(row[1]))
 
-    # Atualiza o gráfico
     CHART_SENSOR_TEMP1.options['xAxis']['data'] = time_list
     CHART_SENSOR_TEMP1.options['series'][0]['data'] = values_list
     CHART_SENSOR_TEMP1.update()
 #-----------------------------------------------------------------------------------------------------------------
+# definição do gráfico do sensor de temperatura 2
 @ui.refreshable
 def define_and_update_graphic_temp2():
 
     CURRENT_TEMP_TIME, CURRENT_TEMPERATURE = get_current_data('temp')
 
+    # pega as 20 últimas linhas do arquivo "temp_sensors_data.txt" para fazer o gráfico
     data_temp = get_all_data('temp')
     time_list = []
     values_list = []
 
+    # a depender do estado em que está a medição, o gráfico será printado com cores diferentes
+    # caso a temperatura medida esteja dentro do intervalo esperado
     if CURRENT_TEMPERATURE[1] >= MIN_TEMP and CURRENT_TEMPERATURE[1] <= MAX_TEMP:
         CHART_SENSOR_TEMP2 = ui.echart({
                 'title': {
@@ -336,8 +346,8 @@ def define_and_update_graphic_temp2():
                     'splitLine': {
                         'show': True,
                         'lineStyle': {
-                            'color': "#FFFFFF", # Cinza escuro (para não ofuscar o gráfico)
-                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                            'color': "#FFFFFF", 
+                            'type': 'dashed'   
                         }
                     }
                 },
@@ -358,7 +368,8 @@ def define_and_update_graphic_temp2():
                 }],
                  
             }).classes('w-full h-96')
-        
+
+    # caso a temperatura medida esteja acima do normal esperado      
     elif CURRENT_TEMPERATURE[1] > MAX_TEMP:
         CHART_SENSOR_TEMP2 = ui.echart({
                 'title': {
@@ -393,8 +404,8 @@ def define_and_update_graphic_temp2():
                     'splitLine': {
                         'show': True,
                         'lineStyle': {
-                            'color': "#DB977C", # Cinza escuro (para não ofuscar o gráfico)
-                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                            'color': "#DB977C", 
+                            'type': 'dashed'    
                         }
                     }
                 },
@@ -415,7 +426,8 @@ def define_and_update_graphic_temp2():
                 }],
                  
             }).classes('w-full h-96')
-    
+        
+    # caso o sensor de temperatura esteja desconectado
     elif CURRENT_TEMPERATURE[1] == DISC_TEMP:
         CHART_SENSOR_TEMP2 = ui.echart({
                 'title': {
@@ -472,6 +484,7 @@ def define_and_update_graphic_temp2():
                  
             }).classes('w-full h-96')
     
+    # caso a temperatura medida seja mais baixa que o normal esperado
     else:
         CHART_SENSOR_TEMP2 = ui.echart({
                 'title': {
@@ -506,8 +519,8 @@ def define_and_update_graphic_temp2():
                     'splitLine': {
                         'show': True,
                         'lineStyle': {
-                            'color': "#98BDC4", # Cinza escuro (para não ofuscar o gráfico)
-                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                            'color': "#98BDC4", 
+                            'type': 'dashed'   
                         }
                     }
                 },
@@ -529,28 +542,30 @@ def define_and_update_graphic_temp2():
                  
             }).classes('w-full h-96')
 
-    for row in data_temp:
-        
+    # checa se a linha está completa, separa os tipos de dados e atualiza o gráfico para os novos valores
+    for row in data_temp:       
         if len(row) == 3:
             time_list.append(row[0])
             values_list.append(float(row[2]))
 
-    # Atualiza o gráfico
     CHART_SENSOR_TEMP2.options['xAxis']['data'] = time_list
     CHART_SENSOR_TEMP2.options['series'][0]['data'] = values_list
     CHART_SENSOR_TEMP2.update()
 #-----------------------------------------------------------------------------------------------------------------
+# definição do gráfico do trecho 1
 @ui.refreshable
 def define_and_update_graphic_flow():
 
+    # pega os valores atuais e calcula a diferença para saber o estado do trecho
     CURRENT_FLOW_TIME, CURRENT_FLOW = get_current_data('flow')
-
     dif_current_flow = CURRENT_FLOW[0] - CURRENT_FLOW[1]
 
+    # pega as últimas 20 linhas do "flow_difference.txt" para geraro gráfico
     data_temp = get_all_data('flow')
     time_list = []
     values_list = []
 
+    # caso algum sensor de vazão esteja disconectado
     if CURRENT_FLOW[0] == DISC_FLOW or CURRENT_FLOW[1] == DISC_FLOW:
         CHART_SENSOR_FLOW = ui.echart({
                 'title': {
@@ -606,7 +621,8 @@ def define_and_update_graphic_flow():
                 }],
                  
             }).classes('w-full h-96')
-        
+    
+    # caso a diferença de vazão esteja com uma diferença aceitável
     elif dif_current_flow <= DIF_ACCEPT_FLOW:
         CHART_SENSOR_FLOW = ui.echart({
                 'title': {
@@ -664,6 +680,7 @@ def define_and_update_graphic_flow():
                  
             }).classes('w-full h-96')
     
+    # caso a diferença de vazão notifique algum vazamento ou algo de errado com o trecho
     else:
         CHART_SENSOR_FLOW = ui.echart({
                 'title': {
@@ -698,8 +715,8 @@ def define_and_update_graphic_flow():
                     'splitLine': {
                         'show': True,
                         'lineStyle': {
-                            'color': "#DB977C", # Cinza escuro (para não ofuscar o gráfico)
-                            'type': 'dashed'    # Pontilhado (fica mais elegante)
+                            'color': "#DB977C", 
+                            'type': 'dashed'   
                         }
                     }
                 },
@@ -721,13 +738,12 @@ def define_and_update_graphic_flow():
 
             }).classes('w-full h-96')
 
+    # checa se a linha está completa, separa os tipos de dados e atualiza o gráfico para os novos valores
     for row in data_temp:
-        
         if len(row) == 2:
             time_list.append(row[1])
             values_list.append(float(row[0]))
 
-    # Atualiza o gráfico
     CHART_SENSOR_FLOW.options['xAxis']['data'] = time_list
     CHART_SENSOR_FLOW.options['series'][0]['data'] = values_list
     CHART_SENSOR_FLOW.update()
@@ -841,7 +857,7 @@ def get_current_data(arc):
     if len(linhas) == 0:
         return ('00:00:00', [])
 
-    # pega a última linha e separa os dados
+    # pega a última linha e separa os dados pela ','
     ultima_linha = linhas[-1] 
     partes = ultima_linha.strip().split(',')
     
@@ -869,6 +885,7 @@ def get_current_data(arc):
     # se a linha estiver quebrada/incompleta
     return ('00:00:00', [])
 #-----------------------------------------------------------------------------------------------------------------
+# função utilizada para pegar os dados para fazer os gŕaficos, ou seja, pega as últimas 20 linhas do arquivo escolhido
 def get_all_data(arc):
 
     linhas = [] 
@@ -902,7 +919,7 @@ def get_all_data(arc):
     if len(linhas) == 0:
         return dados
 
-    # pega as últimas 20 linhas e separa os dados
+    # pega as últimas 20 linhas e separa os dados pela ','
     ultimas_linhas = linhas[-20:] 
     for linha in ultimas_linhas:
         partes = linha.strip().split(',')
@@ -910,6 +927,7 @@ def get_all_data(arc):
 
     return dados
 #-----------------------------------------------------------------------------------------------------------------
+# função utilizada para pegar as 10 últimas linhas do "debug_data.txt" para gerar os alertas recentes na dashboard
 def get_debug_data():
      
     linhas = [] 
@@ -934,7 +952,7 @@ def get_debug_data():
     if len(linhas) == 0:
         return dados
 
-    # pega as últimas 10 linhas e separa os dados
+    # pega as últimas 10 linhas e separa os dados pela ','
     ultimas_linhas = linhas[-10:] 
     for linha in ultimas_linhas:
         partes = linha.strip().split(',')
@@ -942,6 +960,8 @@ def get_debug_data():
 
     return dados
 #-----------------------------------------------------------------------------------------------------------------
+# para um desenvolvimento futuro, fazer um merge entre essa função e as de cima é possível
+# função responsável para pegar as últimas 150 para a construção da aba de histórico
 def get_all_debug_data():
      
     linhas = [] 
@@ -966,27 +986,31 @@ def get_all_debug_data():
     if len(linhas) == 0:
         return dados
 
-    # pega as últimas 10 linhas e separa os dados
+    # pega as últimas 150 linhas e separa os dados pela ','
     ultimas_linhas = linhas[-150:] 
     for linha in ultimas_linhas:
         partes = linha.strip().split(',')
         dados.append(partes)
 
-    return dados[::-1]
+    return dados
 #-----------------------------------------------------------------------------------------------------------------
+# função que atualiza o histórico dos alertas recentes da aba dashboard
 @ui.refreshable
 def update_history():
 
+    # pega as últimas 10 linhas do arquivo e inverte, para que a última escritaa passe a ser a primeira na lista
     debug_data = get_debug_data()
+    debug_data.reverse()
     count = 0
 
+    # cria as notificações no 'timeline' de avisos reentes
     for row in debug_data:
         if len(row) == 2:
            
-            with ui.timeline(side='right').classes('w-full max-w-md'):
-                
-                if count == 0:
+            with ui.timeline(side='right').classes('w-full max-w-md'):  
 
+                # caso seja a primeira, será plotada com uma cor vermelha mais viva e um icon distindo
+                if count == 0:
                     ui.timeline_entry(
                         title=f"{row[0]}",
                         subtitle=f"{row[1]}",
@@ -994,8 +1018,8 @@ def update_history():
                     ).classes('text-xl font-bold text-red-600') \
                      .props('color=red-600')
 
+                # caso contrário, um vermelho mais escuro
                 else:
-
                     ui.timeline_entry(
                         title=f"{row[0]}",
                         subtitle=f"{row[1]}",
@@ -1003,7 +1027,7 @@ def update_history():
                     ).classes('text-xl font-bold text-black') \
                      .props('color=red-900')
                     
-            
+            # atualiza o contador
             count = count+1  
     count = 0
 #-----------------------------------------------------------------------------------------------------------------
@@ -1035,12 +1059,15 @@ def temp_expansions():
                         ui.label('Status: Ativo').classes('text-sm text-green-400')
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-500')
                 
+                # chama a função de criação dos gráficos
                 if i == 0:
                     define_and_update_graphic_temp1()
                 elif i == 1:
                     define_and_update_graphic_temp2()
 
+                # faz chamar essas funções de 30 em 30 segundos
                 ui.timer(30, define_and_update_graphic_temp1.refresh)
+                ui.timer(30, define_and_update_graphic_temp2.refresh)
         
         # caso a temperatura esteja acima do esperado
         elif CURRENT_TEMPERATURE[i] > MAX_TEMP:
@@ -1060,12 +1087,15 @@ def temp_expansions():
                         ui.label('Status: Ativo').classes('text-sm text-white')
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
 
+                # chama a função de criação dos gráficos
                 if i == 0:
                     define_and_update_graphic_temp1()
                 elif i == 1:
                     define_and_update_graphic_temp2()
 
+                # faz chamar essas funções de 30 em 30 segundos
                 ui.timer(30, define_and_update_graphic_temp1.refresh)
+                ui.timer(30, define_and_update_graphic_temp2.refresh)
 
         # caso o sensor esteja desconectado
         elif CURRENT_TEMPERATURE[i] == DISC_TEMP:
@@ -1085,12 +1115,15 @@ def temp_expansions():
                         ui.label('Status: Disconectado').classes('text-sm text-red-400')
                         ui.label(f'Última atualização: 00:00:00').classes('text-xs text-gray-500')
 
+                # chama a função de criação dos gráficos
                 if i == 0:
                     define_and_update_graphic_temp1()
                 elif i == 1:
                     define_and_update_graphic_temp2()
 
+                # faz chamar essas funções de 30 em 30 segundos
                 ui.timer(30, define_and_update_graphic_temp1.refresh)
+                ui.timer(30, define_and_update_graphic_temp2.refresh)
         
         #caso a temperatura esteja baixa
         else:
@@ -1110,14 +1143,15 @@ def temp_expansions():
                         ui.label('Status: Ativo').classes('text-sm text-white')
                         ui.label(f'Última atualização: {CURRENT_TEMP_TIME}').classes('text-xs text-gray-300')
 
+                # chama a função de criação dos gráficos
                 if i == 0:
                     define_and_update_graphic_temp1()
                 elif i == 1:
                     define_and_update_graphic_temp2()
 
+                # faz chamar essas funções de 30 em 30 segundos
                 ui.timer(30, define_and_update_graphic_temp1.refresh)
                 ui.timer(30, define_and_update_graphic_temp2.refresh)
-
 #-----------------------------------------------------------------------------------------------------------------
 # função para utilizar no timer e recarregar a página das vazões
 @ui.refreshable
@@ -1191,9 +1225,11 @@ def stretch_expansions():
                         ui.label('Última atualização: 00:00:00').classes('text-sm text-red-400')
                         ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-500')
 
+                # chama a função de criação dos gráficos
                 if i == 0:
                     define_and_update_graphic_flow()
                 
+                # faz chamar essa função de 30 em 30 segundos
                 ui.timer(30, define_and_update_graphic_flow.refresh)
 
         # caso em que a vazão está normal
@@ -1213,10 +1249,12 @@ def stretch_expansions():
                     with ui.column().classes('items-end'):
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-sm text-green-400')
                         ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-500')
-            
+
+                # chama a função de criação dos gráficos
                 if i == 0:
                     define_and_update_graphic_flow()
                 
+                # faz chamar essa função de 30 em 30 segundos
                 ui.timer(30, define_and_update_graphic_flow.refresh)
         
         # caso em que a diferença de vazão é maior que 1
@@ -1237,17 +1275,21 @@ def stretch_expansions():
                         ui.label(f'Última atualização: {CURRENT_FLOW_TIME}').classes('text-sm text-white')
                         ui.label(f'Trecho monitorado pelos sensores {i+1} e {i+2}').classes('text-xs text-gray-300')
                 
+                # chama a função de criação dos gráficos
                 if i == 0:
                     define_and_update_graphic_flow()
                 
+                # faz chamar essa função de 30 em 30 segundos
                 ui.timer(30, define_and_update_graphic_flow.refresh)
 #-----------------------------------------------------------------------------------------------------------------
+# faz a bolinha com 3 barrinhas do menu abrir e fechar, mostrando outros botões
 def toggle_menu():
     # inverte o estado do menu
     MENU_STATE['aberto'] = not MENU_STATE['aberto']
 #-----------------------------------------------------------------------------------------------------------------
-def criar_cartao_notificacao(item):
-
+# cria o bloco/cartão para ser plotado no histórico de cada notificação
+def make_block_notification(item):
+    # checa se a linha está completa e cria o bloco
     if len(item) == 2:
         with ui.card().classes('w-full p-2 bg-slate-100 shadow-sm border border-slate-200'):
             with ui.row().classes('items-center gap-2'):
@@ -1255,39 +1297,42 @@ def criar_cartao_notificacao(item):
                 ui.label(f"#{item[0]}").classes('font-bold text-slate-700')
                 ui.label(f"{item[1]}").classes('text-xs text-gray-500')
 #-----------------------------------------------------------------------------------------------------------------
+# faz o gerenciamento do histórico, do que mostrar em cada aba e a parte do mecanismo de passar as páginas
 @ui.refreshable
-def renderizar_notificacoes(pagina_atual):
+def update_notifications(pagina_atual):
 
+    # pega as últimas 150 linhas do arquivo "debug_data.txt" e inverte a lista
     debug_data = get_all_debug_data()
+    debug_data.reverse()
 
+    # conta que gerencia a paginação
     items_por_pagina = 30
     inicio = (pagina_atual - 1) * items_por_pagina
     fim = inicio + items_por_pagina
     
-    # Pega apenas os 10 itens dessa página
+    # Pega apenas os 30 itens dessa página dentro da lista de 150 itens
     dados_pagina = debug_data[inicio:fim]
     
-    # Separa: 5 para esquerda, 5 para direita
+    # Separa 15 para o lado esquerdo da tela e 15 para o direito
     lado_esquerdo = dados_pagina[:15]
     lado_direito = dados_pagina[15:]
 
-    # --- LAYOUT DAS COLUNAS COM LINHA VERTICAL ---
-    # Usamos grid com 3 colunas: [Conteúdo Esquerda] [Linha] [Conteúdo Direita]
+    # configuração das colunas e separação delas por uma linha vertical
+    # usamos grid com 3 colunas: [Conteúdo Esquerda] [Linha] [Conteúdo Direita]
     with ui.grid().classes('grid-cols-[1fr_auto_1fr] w-full gap-4'):
         
-        # --- COLUNA ESQUERDA ---
+        # cria as notificações do lado esquerdo
         with ui.column().classes('w-full gap-3'):
             for item in lado_esquerdo:
-                criar_cartao_notificacao(item)
+                make_block_notification(item)
         
-        # --- LINHA VERTICAL (DIVISÓRIA) ---
-        # Uma div fina cinza que ocupa toda a altura (h-full)
+        # Uma linha fina cinza que ocupa toda a altura da página
         ui.element('div').classes('w-[2px] bg-slate-300 h-full mx-auto rounded')
 
-        # --- COLUNA DIREITA ---
+        # cria as notificações do lado direito
         with ui.column().classes('w-full gap-3'):
             for item in lado_direito:
-                criar_cartao_notificacao(item)
+                make_block_notification(item)
 #-----------------------------------------------------------------------------------------------------------------
 
 #==================================================================================================================
@@ -1295,9 +1340,11 @@ def renderizar_notificacoes(pagina_atual):
 #==================================================================================================================
 
 #----------------------------------------------------------------------------------------------------------------- 
+# definição da página do histórico
 @ui.page('/history')
 def history_page():
     
+    # definição dos botões interativos do menu
     with ui.column().classes('fixed bottom-5 right-5 z-100 gap-3 items-center'):
 
         # declaração do botão de histórico
@@ -1314,38 +1361,36 @@ def history_page():
         ui.button(on_click=toggle_menu) \
             .classes('rounded-full w-16 h-16 !bg-slate-800 !hover:bg-slate-700 shadow-2xl text-white text-xl border-2 border-slate-600') \
             .bind_icon_from(MENU_STATE, 'aberto', 
-                    backward=lambda x: 'close' if x else 'menu')
+                    backward=lambda x: 'close' if x else 'menu') # muda o icon se tiver aberto ou fechado
         
-    # O Ícone (Tamanho 3em = grande)
+    # o icon no começo da página acima de 'HISTÓRICO"
     ui.icon('manage_history', color='blue-800', size='3em')
     
     with ui.column().classes('gap-0'):
-        # O Título com a fonte personalizada
+        # o título 
         ui.label('HISTÓRICO') \
             .classes('fonte-titulo text-4xl text-blue-800 tracking-wide')
         
-        # Um sublinhado ou detalhe pequeno (opcional)
+        # o subtítulo
         ui.label('Registro de Atividades') \
             .classes('text-sm text-gray-500 font-bold uppercase tracking-widest')
 
-    # Área que será atualizada (Começa na página 1)
-    renderizar_notificacoes(1)
+    # área que será atualizada
+    update_notifications(1)
 
-    # Espaçador para empurrar a paginação para baixo (opcional)
+    # espaçador para empurrar a paginação para baixo (opcional)
     ui.space()
 
-    # --- PAGINAÇÃO CENTRALIZADA ---
-    # Container centralizado (items-center)
+    # container centralizado (items-center)
     with ui.column().classes('w-full items-center mt-2'):
-        
-        # O componente de paginação
+        # o componente de paginação
         paginacao = ui.pagination(1, 5, direction_links=True) \
             .classes('shadow-lg bg-white rounded-lg')
         
-        # LÓGICA: Quando mudar o valor, atualiza a função lá em cima
-        paginacao.on_value_change(lambda: renderizar_notificacoes.refresh(paginacao.value))
+        # quando mudar o valor, atualiza a função lá em cima
+        paginacao.on_value_change(lambda: update_notifications.refresh(paginacao.value))
 
-        ui.timer(30, lambda: renderizar_notificacoes.refresh(paginacao.value))
+        ui.timer(30, lambda: update_notifications.refresh(paginacao.value))
 
 ui.run()
 #-----------------------------------------------------------------------------------------------------------------
@@ -1364,13 +1409,15 @@ def dashboard_page():
         with ui.column().classes('w-1/5 bg-gray-100 p-4 border-r border-slate-300'):
 
             with ui.column().classes('w-full items-center mb-5'):
-    
+                
+                # título e subtítulo da coluna
                 ui.label('Monitoramento') \
                     .classes('text-red-500 text-sm uppercase tracking-widest')
-                    
+                
                 ui.label('Alertas Recentes') \
                     .classes('text-3xl font-bold')
                 
+                # atualiza os alertas recentes de 30 em 30 segs
                 update_history()
                 ui.timer(30, update_history.refresh)
 
@@ -1400,7 +1447,7 @@ def dashboard_page():
                     ui.timer(30, flow_expansions.refresh)
                     ui.timer(30, stretch_expansions.refresh)
 
-        
+        # difinição no menu interativo
         with ui.column().classes('fixed bottom-5 right-5 z-100 gap-3 items-center'):
 
             # declaração do botão de histórico
@@ -1418,7 +1465,7 @@ def dashboard_page():
                 .classes('rounded-full w-16 h-16 !bg-slate-800 !hover:bg-slate-700 shadow-2xl text-white text-xl border-2 border-slate-600') \
                 .bind_icon_from(MENU_STATE, 'aberto', 
                         backward=lambda x: 'close' if x else 'menu')
-
+            
 ui.run()
 #----------------------------------------------------------------------------------------------------------------- 
     
